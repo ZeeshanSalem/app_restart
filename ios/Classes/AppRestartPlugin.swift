@@ -5,7 +5,7 @@ import UserNotifications
 /// `RestartAppPlugin` is a Flutter plugin that provides functionality to restart
 /// the iOS app by scheduling a notification and then terminating the app.
 /// This implementation is specific to the iOS platform.
-public class RestartAppPlugin: NSObject, FlutterPlugin {
+public class AppRestartPlugin: NSObject, FlutterPlugin {
     /// The Flutter method channel used for communication between Dart and native code.
     static var channel: FlutterMethodChannel?
 
