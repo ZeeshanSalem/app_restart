@@ -23,6 +23,9 @@ abstract class AppRestartPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Restart the app or trigger platform-specific action.
+  Future<void> restartApp();
+
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }

@@ -14,4 +14,14 @@ class MethodChannelAppRestart extends AppRestartPlatform {
     final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
+
+
+  @override
+  Future<void> restartApp() async {
+    try {
+      await methodChannel.invokeMethod('restartApp');
+    } on PlatformException catch (e) {
+      throw Exception('Failed to restart the app: ${e.message}');
+    }
+  }
 }
