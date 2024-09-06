@@ -4,7 +4,7 @@ import UserNotifications
 
 public class SwiftAppRestartPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "app_restart", binaryMessenger: registrar.messenger())
+        let channel = FlutterMethodChannel(name: "restartApp", binaryMessenger: registrar.messenger())
         let instance = SwiftAppRestartPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
