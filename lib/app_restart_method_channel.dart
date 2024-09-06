@@ -7,7 +7,7 @@ import 'app_restart_platform_interface.dart';
 class MethodChannelAppRestart extends AppRestartPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('restartApp');
+  final methodChannel = const MethodChannel('restart');
 
   @override
   Future<String?> getPlatformVersion() async {

@@ -12,59 +12,81 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-/** AppRestartPlugin */
-class AppRestartPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-  private lateinit var context: Context
-  private lateinit var channel: MethodChannel
-  private var activity: Activity? = null
+/**
+ * `RestartPlugin` class provides a method to restart a Flutter application in Android.
+ *
+ * It uses the Flutter platform channels to communicate with the Flutter code.
+ * Specifically, it uses a `MethodChannel` named 'restart' for this communication.
+ *
+ * The main functionality is provided by the `onMethodCall` method.
+ */
+class RestartPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+    private lateinit var context: Context
+    private lateinit var channel: MethodChannel
+    private var activity: Activity? = null
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    context = flutterPluginBinding.applicationContext
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "restartApp")
-    channel.setMethodCallHandler(this)
-  }
-
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-    when (call.method) {
-      "restartApp" -> {
-        restartApp()
-        result.success("App restart triggered")
-      }
-      "getPlatformVersion" -> {
-        result.success("Android ${android.os.Build.VERSION.RELEASE}")
-      }
-      else -> {
-        result.notImplemented()
-      }
+    /**
+     * Called when the plugin is attached to the Flutter engine.
+     *
+     * It initializes the `context` with the application context and
+     * sets this plugin instance as the handler for method calls from Flutter.
+     */
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        context = flutterPluginBinding.applicationContext
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "restart")
+        channel.setMethodCallHandler(this)
     }
-  }
 
-  private fun restartApp() {
-    activity?.let { currentActivity ->
-      val intent = currentActivity.packageManager.getLaunchIntentForPackage(currentActivity.packageName)
-      intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-      currentActivity.startActivity(intent)
-      currentActivity.finishAffinity()
+    /**
+     * Handles method calls from the Flutter code.
+     *
+     * If the method call is 'restartApp', it restarts the app and sends a successful result.
+     * For any other method call, it sends a 'not implemented' result.
+     */
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        if (call.method == "restartApp") {
+            restartApp()
+            result.success("ok")
+        } else {
+            result.notImplemented()
+        }
     }
-  }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+    /**
+     * Called when the plugin is detached from the Flutter engine.
+     *
+     * It removes the handler for method calls from Flutter.
+     */
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+    }
 
-  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    activity = binding.activity
-  }
+    /**
+     * Restarts the application.
+     */
+    private fun restartApp() {
+        activity?.let { currentActivity ->
+            val intent =
+                currentActivity.packageManager.getLaunchIntentForPackage(currentActivity.packageName)
+            intent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            currentActivity.startActivity(intent)
+            currentActivity.finishAffinity()
+        }
+    }
 
-  override fun onDetachedFromActivityForConfigChanges() {
-    activity = null
-  }
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        activity = binding.activity
+    }
 
-  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    activity = binding.activity
-  }
+    override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+    }
 
-  override fun onDetachedFromActivity() {
-    activity = null
-  }
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        activity = binding.activity
+    }
+
+    override fun onDetachedFromActivity() {
+        activity = null
+    }
 }
